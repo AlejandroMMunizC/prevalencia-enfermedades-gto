@@ -1,0 +1,45 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ── Entornos virtuales ────────────────────────────────────────────────────────
+.env
+.venv
+env/
+venv/
+ENV/
+
+# ── Sistema operativo ─────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDEs ──────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+
+# ── Datos crudos: archivos .zip (redundantes con los CSV) ─────────────────────
+data/raw/**/*.zip
+
+# ── Dashboard (dependencias de build) ────────────────────────────────────────
+dashboard/node_modules/
+dashboard/.next/
+dashboard/dist/
+
+# ── Credenciales / configuración local ───────────────────────────────────────
+.env.local
+secrets.json
+config.local.yaml
