@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Salud Pública · Guanajuato 2020–2022</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0d0f18;--surf:#151722;--surf2:#1d2030;--surf3:#252840;
+  --border:#2a2d44;--text:#e8eaf0;--muted:#7b7f9a;--dim:#4a4e6a;
+  --blue:#4f8ef7;--green:#34c9a0;--orange:#f5a623;
+  --red:#e05c5c;--purple:#9b72ef;--teal:#26c6da;
+  --font:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.5;overflow-x:hidden}
+
+/* ── HEADER ── */
+header{background:linear-gradient(160deg,#111527 0%,#0d0f18 60%);
+  border-bottom:1px solid var(--border);padding:24px 40px 0;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px)}
+.h-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.h-left h1{font-size:18px;font-weight:800;letter-spacing:-.4px}
+.h-left p{color:var(--muted);font-size:11px;margin-top:2px}
+.badge{background:var(--blue);color:#fff;font-size:9px;font-weight:800;
+  padding:2px 7px;border-radius:20px;letter-spacing:.6px;text-transform:uppercase;margin-right:8px}
+
+/* ── NAV TABS ── */
+.nav-tabs{display:flex;gap:0;margin-top:4px}
+.nav-tab{padding:10px 20px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;
+  border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* ── INDICATOR SELECTOR ── */
+.ind-bar{display:flex;gap:8px;padding:16px 40px;background:var(--surf);border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center}
+.ind-bar span{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-right:4px}
+.ind-pill{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;
+  border:2px solid transparent;transition:.2s;display:flex;align-items:center;gap:5px}
+.ind-pill .dot{width:7px;height:7px;border-radius:50%}
+.ind-pill:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.ind-pill.active{box-shadow:0 0 0 2px currentColor,0 4px 16px rgba(0,0,0,.4)}
+
+/* ── MAIN ── */
+main{max-width:1320px;margin:0 auto;padding:32px 40px 80px}
+.tab-section{display:none}
+.tab-section.active{display:block}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.kpi{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:18px 20px;
+  position:relative;overflow:hidden;cursor:default;transition:.2s}
+.kpi:hover{border-color:var(--dim);transform:translateY(-1px)}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.blue::after{background:var(--blue)} .kpi.red::after{background:var(--red)}
+.kpi.orange::after{background:var(--orange)} .kpi.purple::after{background:var(--purple)}
+.kpi.green::after{background:var(--green)} .kpi.teal::after{background:var(--teal)}
+.kpi-lbl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.kpi-val{font-size:30px;font-weight:900;letter-spacing:-1px;line-height:1}
+.kpi-unit{font-size:13px;font-weight:400;color:var(--muted)}
+.kpi-delta{font-size:10px;margin-top:5px}
+.up{color:var(--red)} .dn{color:var(--green)} .eq{color:var(--muted)}
+
+/* ── SECTION TITLES ── */
+.sec-head{margin-bottom:6px}
+.sec-head h2{font-size:15px;font-weight:700}
+.sec-head p{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ── CARDS & GRID ── */
+.card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:22px}
+.card-t{font-size:12px;font-weight:700;margin-bottom:2px}
+.card-s{font-size:10px;color:var(--muted);margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+canvas{max-height:260px}
+
+/* ── TABLE ── */
+.tbl-toolbar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.search-box{background:var(--surf2);border:1px solid var(--border);color:var(--text);
+  padding:7px 12px;border-radius:8px;font-size:12px;width:220px}
+.search-box:focus{outline:none;border-color:var(--blue)}
+.search-box::placeholder{color:var(--muted)}
+select{background:var(--surf2);border:1px solid var(--border);color:var(--text);
+  padding:7px 10px;border-radius:8px;font-size:11px;cursor:pointer}
+select:focus{outline:none;border-color:var(--blue)}
+.compare-btn{padding:7px 16px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;
+  background:var(--blue);color:#fff;border:none;transition:.2s;display:none}
+.compare-btn:hover{background:#3a7de8}
+.compare-btn.visible{display:inline-flex;align-items:center;gap:5px}
+
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+thead th{padding:9px 12px;text-align:left;font-size:9.5px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);
+  cursor:pointer;white-space:nowrap;user-select:none}
+thead th:hover{color:var(--text)}
+.sorted{color:var(--blue)!important}
+tbody tr{border-bottom:1px solid var(--border);transition:.15s;cursor:pointer}
+tbody tr:hover{background:var(--surf2)}
+tbody tr.selected-row{background:rgba(79,142,247,.08);border-left:2px solid var(--blue)}
+tbody td{padding:9px 12px;white-space:nowrap}
+.mun-name{font-weight:700;font-size:12px}
+.zone-tag{font-size:9px;color:var(--muted);display:block;margin-top:1px}
+.mini-bar-wrap{display:flex;align-items:center;gap:6px}
+.mini-bar-bg{flex:1;height:5px;background:var(--surf3);border-radius:3px;min-width:60px}
+.mini-bar{height:5px;border-radius:3px;transition:width .4s}
+.risk-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:9.5px;font-weight:800}
+.risk-hi{background:rgba(224,92,92,.15);color:var(--red)}
+.risk-md{background:rgba(245,166,35,.15);color:var(--orange)}
+.risk-lo{background:rgba(52,201,160,.15);color:var(--green)}
+.chk-cell{width:28px;text-align:center}
+.row-chk{width:14px;height:14px;accent-color:var(--blue);cursor:pointer}
+
+/* ── DETAIL PANEL ── */
+#detailPanel{position:fixed;right:0;top:0;bottom:0;width:380px;
+  background:var(--surf);border-left:1px solid var(--border);
+  transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+  z-index:200;display:flex;flex-direction:column;overflow:hidden}
+#detailPanel.open{transform:translateX(0)}
+.panel-header{padding:20px 22px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:flex-start}
+.panel-title{font-size:15px;font-weight:800}
+.panel-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.panel-close{background:var(--surf2);border:1px solid var(--border);color:var(--text);
+  width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:14px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
+.panel-close:hover{background:var(--surf3);border-color:var(--dim)}
+.panel-body{flex:1;overflow-y:auto;padding:20px 22px}
+.panel-kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.panel-kpi{background:var(--surf2);border:1px solid var(--border);border-radius:9px;padding:12px 14px}
+.panel-kpi-lbl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.panel-kpi-val{font-size:20px;font-weight:900;margin-top:3px;letter-spacing:-.5px}
+.panel-kpi-vs{font-size:9px;color:var(--muted);margin-top:2px}
+.panel-radar-wrap{margin-bottom:18px}
+.panel-radar-title{font-size:11px;font-weight:700;margin-bottom:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:190;
+  opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(2px)}
+.overlay.open{opacity:1;pointer-events:all}
+
+/* ── COMPARE MODAL ── */
+#compareModal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center}
+#compareModal.open{display:flex}
+.modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}
+.modal-box{position:relative;background:var(--surf);border:1px solid var(--border);
+  border-radius:16px;width:min(820px,95vw);max-height:90vh;overflow-y:auto;padding:28px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-title{font-size:15px;font-weight:800}
+.modal-close{background:var(--surf2);border:1px solid var(--border);color:var(--text);
+  width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:15px;
+  display:flex;align-items:center;justify-content:center;transition:.15s}
+.modal-close:hover{background:var(--surf3)}
+.compare-names{display:flex;gap:16px;margin-bottom:20px;justify-content:center}
+.compare-name-badge{padding:5px 16px;border-radius:20px;font-size:12px;font-weight:700}
+
+/* ── MISC ── */
+footer{text-align:center;padding:20px 40px;color:var(--muted);font-size:10px;border-top:1px solid var(--border)}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;
+  font-weight:600;background:var(--surf2);color:var(--muted);border:1px solid var(--border)}
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.section-gap{margin-bottom:32px}
+
+@media(max-width:900px){
+  header,main,.ind-bar{padding-left:20px;padding-right:20px}
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .grid2,.grid3{grid-template-columns:1fr}
+  #detailPanel{width:100%;transform:translateY(100%)}
+  #detailPanel.open{transform:translateY(0)}
+}
+</style>
+</head>
+<body>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeDetail();closeCompare()"></div>
+
+<!-- DETAIL PANEL -->
+<div id="detailPanel">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title" id="panelTitle">—</div>
+      <div class="panel-sub" id="panelSub">—</div>
+    </div>
+    <button class="panel-close" onclick="closeDetail()">✕</button>
+  </div>
+  <div class="panel-body">
+    <div class="panel-kpi-row" id="panelKpis"></div>
+    <div class="panel-radar-wrap">
+      <div class="panel-radar-title">Perfil vs promedio estatal (2022)</div>
+      <canvas id="radarChart" style="max-height:240px"></canvas>
+    </div>
+    <div id="panelExtra"></div>
+  </div>
+</div>
+
+<!-- COMPARE MODAL -->
+<div id="compareModal">
+  <div class="modal-bg" onclick="closeCompare()"></div>
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Comparación de municipios</div>
+      <button class="modal-close" onclick="closeCompare()">✕</button>
+    </div>
+    <div class="compare-names" id="compareNames"></div>
+    <div class="grid2">
+      <div>
+        <div class="card-t" style="margin-bottom:14px;text-align:center">Radar de indicadores</div>
+        <canvas id="compareRadar" style="max-height:300px"></canvas>
+      </div>
+      <div>
+        <div class="card-t" style="margin-bottom:14px;text-align:center">Enfermedades crónicas</div>
+        <canvas id="compareBar" style="max-height:300px"></canvas>
+      </div>
+    </div>
+    <div id="compareTable" style="margin-top:20px"></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="h-top">
+    <div class="h-left">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span class="badge">Guanajuato</span>
+        <span style="color:var(--muted);font-size:10px">ENSADUL · ENSANUT · 2020–2022</span>
+      </div>
+      <h1>Salud Pública en Guanajuato</h1>
+      <p>Herramienta de apoyo a la toma de decisiones · Prevalencia de enfermedades crónicas por municipio</p>
+    </div>
+    <div style="font-size:10px;color:var(--muted);text-align:right">
+      <div>n = 3,377 adultos encuestados</div>
+      <div style="margin-top:2px">Exportación de Talento 2024 · Juventudes GTO</div>
+    </div>
+  </div>
+  <nav class="nav-tabs">
+    <div class="nav-tab active" onclick="switchTab('overview',this)">Resumen</div>
+    <div class="nav-tab" onclick="switchTab('municipios',this)">Municipios</div>
+    <div class="nav-tab" onclick="switchTab('salud',this)">Salud mental</div>
+    <div class="nav-tab" onclick="switchTab('estilos',this)">Estilos de vida</div>
+  </nav>
+</header>
+
+<!-- INDICATOR BAR -->
+<div class="ind-bar" id="indBar" style="display:none">
+  <span>Ver por:</span>
+  <div class="ind-pill active" data-ind="diabetes"   data-color="#4f8ef7" onclick="selectIndicator(this)"
+    style="background:rgba(79,142,247,.15);color:#4f8ef7;border-color:#4f8ef7">
+    <div class="dot" style="background:#4f8ef7"></div>Diabetes
+  </div>
+  <div class="ind-pill" data-ind="hta"        data-color="#e05c5c" onclick="selectIndicator(this)"
+    style="background:rgba(224,92,92,.08);color:var(--muted);border-color:transparent">
+    <div class="dot" style="background:#e05c5c"></div>Hipertensión
+  </div>
+  <div class="ind-pill" data-ind="colesterol" data-color="#f5a623" onclick="selectIndicator(this)"
+    style="background:rgba(245,166,35,.08);color:var(--muted);border-color:transparent">
+    <div class="dot" style="background:#f5a623"></div>Colesterol
+  </div>
+  <div class="ind-pill" data-ind="score_dep"  data-color="#9b72ef" onclick="selectIndicator(this)"
+    style="background:rgba(155,114,239,.08);color:var(--muted);border-color:transparent">
+    <div class="dot" style="background:#9b72ef"></div>Depresión
+  </div>
+  <div class="ind-pill" data-ind="fuma"       data-color="#34c9a0" onclick="selectIndicator(this)"
+    style="background:rgba(52,201,160,.08);color:var(--muted);border-color:transparent">
+    <div class="dot" style="background:#34c9a0"></div>Tabaquismo
+  </div>
+</div>
+
+<main>
+
+<!-- ════════ TAB: OVERVIEW ════════ -->
+<div class="tab-section active" id="tab-overview">
+
+  <div class="section-gap">
+    <div class="sec-head">
+      <h2>Indicadores clave — ENSADUL 2022</h2>
+      <p>n = 1,227 adultos · Prevalencia sobre respuestas válidas · Haz clic en un indicador para ver el detalle por municipio</p>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi blue" onclick="selectIndicatorByName('diabetes');switchTab('municipios',document.querySelectorAll('.nav-tab')[1])" style="cursor:pointer">
+        <div class="kpi-lbl">Diabetes</div>
+        <div class="kpi-val"><span class="counter" data-val="13.1">0</span><span class="kpi-unit">%</span></div>
+        <div class="kpi-delta">vs 2021: <span class="up">▲ 2.2 pp</span></div>
+      </div>
+      <div class="kpi red" onclick="selectIndicatorByName('hta');switchTab('municipios',document.querySelectorAll('.nav-tab')[1])" style="cursor:pointer">
+        <div class="kpi-lbl">Hipertensión</div>
+        <div class="kpi-val"><span class="counter" data-val="20.5">0</span><span class="kpi-unit">%</span></div>
+        <div class="kpi-delta">vs 2021: <span class="dn">▼ 0.9 pp</span></div>
+      </div>
+      <div class="kpi orange" onclick="selectIndicatorByName('colesterol');switchTab('municipios',document.querySelectorAll('.nav-tab')[1])" style="cursor:pointer">
+        <div class="kpi-lbl">Colesterol alto</div>
+        <div class="kpi-val"><span class="counter" data-val="16.1">0</span><span class="kpi-unit">%</span></div>
+        <div class="kpi-delta">vs 2021: <span class="up">▲ 1.3 pp</span></div>
+      </div>
+      <div class="kpi purple" onclick="selectIndicatorByName('score_dep');switchTab('municipios',document.querySelectorAll('.nav-tab')[1])" style="cursor:pointer">
+        <div class="kpi-lbl">Score depresivo</div>
+        <div class="kpi-val"><span class="counter" data-val="11.0">0</span><span class="kpi-unit">/28</span></div>
+        <div class="kpi-delta">vs 2021: <span class="eq">— sin cambio</span></div>
+      </div>
+      <div class="kpi green">
+        <div class="kpi-lbl">Triglicéridos</div>
+        <div class="kpi-val"><span class="counter" data-val="14.1">0</span><span class="kpi-unit">%</span></div>
+        <div class="kpi-delta">vs 2021: <span class="up">▲ 1.3 pp</span></div>
+      </div>
+      <div class="kpi teal" onclick="selectIndicatorByName('fuma');switchTab('municipios',document.querySelectorAll('.nav-tab')[1])" style="cursor:pointer">
+        <div class="kpi-lbl">Tabaquismo activo</div>
+        <div class="kpi-val"><span class="counter" data-val="15.1">0</span><span class="kpi-unit">%</span></div>
+        <div class="kpi-delta">vs 2021: <span class="dn">▼ 2.0 pp</span></div>
+      </div>
+      <div class="kpi orange">
+        <div class="kpi-lbl">Consume alcohol</div>
+        <div class="kpi-val"><span class="counter" data-val="46.9">0</span><span class="kpi-unit">%</span></div>
+        <div class="kpi-delta">vs 2021: <span class="up">▲ 0.9 pp</span></div>
+      </div>
+      <div class="kpi red">
+        <div class="kpi-lbl">Ideación suicida</div>
+        <div class="kpi-val"><span class="counter" data-val="6.8">0</span><span class="kpi-unit">%</span></div>
+        <div class="kpi-delta">vs 2021: <span class="dn">▼ 2.1 pp</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-gap">
+    <div class="sec-head"><h2>Tendencia 2021–2022</h2><p>Variación en puntos porcentuales entre ediciones de la encuesta</p></div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-t">Enfermedades crónicas</div>
+        <div class="card-s">% de adultos con diagnóstico médico confirmado</div>
+        <canvas id="chartTrend"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-t">Prevalencia por grupo etario — 2022</div>
+        <div class="card-s">El riesgo escala desde los 40 años</div>
+        <canvas id="chartAge"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-gap">
+    <div class="sec-head"><h2>Perfil por estrato de urbanidad</h2><p>Proxy de marginación · ENSADUL 2022</p></div>
+    <div class="grid3">
+      <div class="card">
+        <div class="card-t">Diabetes e HTA por estrato</div>
+        <div class="card-s">El área urbana concentra mayor diagnóstico (acceso a salud)</div>
+        <canvas id="chartUrb"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-t">Diferencia por sexo</div>
+        <div class="card-s">ENSADUL 2022</div>
+        <canvas id="chartSexo"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-t">Score depresivo por estrato</div>
+        <div class="card-s">Escala CES-D 7–28 · Mayor = más síntomas</div>
+        <canvas id="chartUrbDep"></canvas>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════ TAB: MUNICIPIOS ════════ -->
+<div class="tab-section" id="tab-municipios">
+
+  <div class="section-gap">
+    <div class="sec-head">
+      <h2 id="munTitle">Ranking por Diabetes — Municipios</h2>
+      <p>Haz clic en un municipio para ver su perfil completo · Selecciona dos para comparar</p>
+    </div>
+    <div class="grid2" style="margin-bottom:18px">
+      <div class="card">
+        <div class="card-t" id="rankChartTitle">Top 10 municipios — Diabetes</div>
+        <div class="card-s">Ordenados por prevalencia del indicador seleccionado</div>
+        <canvas id="chartMunRank" style="max-height:300px"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-t">Índice de riesgo compuesto</div>
+        <div class="card-s">Promedio normalizado de diabetes, HTA, colesterol y score depresivo</div>
+        <canvas id="chartRiesgo" style="max-height:300px"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tbl-toolbar">
+        <input class="search-box" type="text" placeholder="🔍  Buscar municipio..." id="searchBox" oninput="renderTable()">
+        <select id="filterZona" onchange="renderTable()">
+          <option value="all">Todas las zonas</option>
+          <option value="Rural">Rural</option>
+          <option value="Semi-urbano">Semi-urbano</option>
+          <option value="Urbano">Urbano</option>
+        </select>
+        <button class="compare-btn" id="compareBtn" onclick="openCompare()">⚖ Comparar (2)</button>
+        <span style="font-size:10px;color:var(--muted);margin-left:auto">Selecciona una fila para ver perfil detallado</span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="chk-cell"></th>
+              <th onclick="setSort('municipio_corto')">Municipio</th>
+              <th onclick="setSort('n')">n</th>
+              <th onclick="setSort('diabetes_pct')" id="th-diabetes">Diabetes ↕</th>
+              <th onclick="setSort('hta_pct')"       id="th-hta">HTA ↕</th>
+              <th onclick="setSort('colesterol_pct')" id="th-col">Colesterol ↕</th>
+              <th onclick="setSort('score_dep_media')" id="th-dep">Dep. ↕</th>
+              <th onclick="setSort('fuma_pct')"      id="th-fuma">Fuma ↕</th>
+              <th onclick="setSort('riesgo_compuesto')">Riesgo ↕</th>
+            </tr>
+          </thead>
+          <tbody id="munTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════ TAB: SALUD MENTAL ════════ -->
+<div class="tab-section" id="tab-salud">
+  <div class="section-gap">
+    <div class="sec-head"><h2>Salud mental — Síntomas depresivos</h2><p>Escala CES-D 7 ítems · ENSADUL 2021–2022</p></div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-t">Score depresivo por municipio — 2022</div>
+        <div class="card-s">Rojo &gt;12 · Naranja &gt;10 · Verde ≤10</div>
+        <canvas id="chartDepMun" style="max-height:280px"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-t">Distribución del score — 2021 vs 2022</div>
+        <div class="card-s">Comparación de tendencia central</div>
+        <canvas id="chartDepTrend"></canvas>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:18px">
+      <div class="card">
+        <div class="card-t">Score por grupo etario</div>
+        <div class="card-s">2022</div>
+        <canvas id="chartDepAge"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-t">Score por sexo y año</div>
+        <div class="card-s">Las mujeres presentan mayor carga sintomática</div>
+        <canvas id="chartDepSexo"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-t">Ideación suicida alguna vez</div>
+        <div class="card-s">% por sexo · 2021 y 2022</div>
+        <canvas id="chartSuic"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ TAB: ESTILOS ════════ -->
+<div class="tab-section" id="tab-estilos">
+  <div class="section-gap">
+    <div class="sec-head"><h2>Estilos de vida</h2><p>Tabaco, alcohol y actividad física · 2020–2022</p></div>
+    <div class="grid3">
+      <div class="card">
+        <div class="card-t">Tabaquismo activo 2020–2022</div>
+        <div class="card-s">% que fuma diariamente u ocasionalmente</div>
+        <canvas id="chartTabTrend"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-t">Consumo de alcohol 2020–2022</div>
+        <div class="card-s">% que consume al menos mensualmente</div>
+        <canvas id="chartAlcTrend"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-t">Tabaquismo por sexo y año</div>
+        <div class="card-s">Brecha hombre–mujer consistente (×3–4)</div>
+        <canvas id="chartTabSexo"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  Datos: ENSANUT Continua COVID-19 2020 · ENSADUL 2021–2022 · Estado de Guanajuato · n = 3,377 adultos<br>
+  <strong>Prevalencia de Enfermedades Crónicas en Guanajuato</strong> · Juventudes GTO · Exportación de Talento 2024
+</footer>
+
+<script>
+const D = {"kpis_2022": {"diabetes": 13.1, "hta": 20.5, "colesterol": 16.1, "trigliceridos": 14.1, "score_dep": 11.0, "fuma": 15.1, "alcohol": 46.9, "ideacion_suicida": 6.8, "n": 1227}, "kpis_2021": {"diabetes": 11.0, "hta": 21.4, "n": 1115}, "tendencias": {"años": [2021, 2022], "diabetes": [11.0, 13.1], "hta": [21.4, 20.5], "colesterol": [14.8, 16.1], "trigliceridos": [12.8, 14.1], "score_dep": [10.98, 11.02]}, "municipios_2022": [{"municipio": "ABASOLO", "n": 52, "año": 2022, "diabetes_pct": 15.4, "hta_pct": 9.6, "colesterol_pct": 19.2, "score_dep_media": 11.79, "edad_media": 49.5, "pct_mujeres": 55.8, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 13.5, "diabetes_pct_norm": 73.68421052631578, "hta_pct_norm": 0.0, "colesterol_pct_norm": 82.4742268041237, "score_dep_media_norm": 94.62809917355368, "riesgo_compuesto": 62.7, "municipio_corto": "ABASOLO", "pct_semirural": 0.0, "trigliceridos_pct": 0, "zona": "Rural"}, {"municipio": "APASEO EL GRANDE", "n": 35, "año": 2022, "diabetes_pct": 17.1, "hta_pct": 22.9, "colesterol_pct": 11.4, "score_dep_media": 10.4, "edad_media": 49.0, "pct_mujeres": 65.7, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 20.0, "diabetes_pct_norm": 84.86842105263159, "hta_pct_norm": 50.18867924528302, "colesterol_pct_norm": 42.268041237113394, "score_dep_media_norm": 37.19008264462811, "riesgo_compuesto": 53.6, "municipio_corto": "APASEO EL GRANDE", "pct_semirural": 100.0, "trigliceridos_pct": 0, "zona": "Semi-urbano"}, {"municipio": "CELAYA", "n": 66, "año": 2022, "diabetes_pct": 13.6, "hta_pct": 18.2, "colesterol_pct": 7.6, "score_dep_media": 10.17, "edad_media": 48.6, "pct_mujeres": 59.1, "pct_rural": 0.0, "pct_urbano": 100.0, "fuma_pct": 16.7, "diabetes_pct_norm": 61.84210526315789, "hta_pct_norm": 32.45283018867924, "colesterol_pct_norm": 22.680412371134015, "score_dep_media_norm": 27.685950413223136, "riesgo_compuesto": 36.2, "municipio_corto": "CELAYA", "pct_semirural": 0.0, "trigliceridos_pct": 0, "zona": "Urbano"}, {"municipio": "COMONFORT", "n": 31, "año": 2022, "diabetes_pct": 12.9, "hta_pct": 19.4, "colesterol_pct": 3.2, "score_dep_media": 10.45, "edad_media": 45.7, "pct_mujeres": 77.4, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 3.2, "diabetes_pct_norm": 57.23684210526315, "hta_pct_norm": 36.9811320754717, "colesterol_pct_norm": 0.0, "score_dep_media_norm": 39.25619834710741, "riesgo_compuesto": 33.4, "municipio_corto": "COMONFORT", "pct_semirural": 100.0, "trigliceridos_pct": 0, "zona": "Semi-urbano"}, {"municipio": "DOLORES HIDALGO CUNA DE LA INDEPEN", "n": 75, "año": 2022, "diabetes_pct": 17.3, "hta_pct": 28.4, "colesterol_pct": 18.7, "score_dep_media": 10.85, "edad_media": 45.9, "pct_mujeres": 81.3, "pct_rural": 54.7, "pct_urbano": 0.0, "fuma_pct": 8.0, "diabetes_pct_norm": 86.18421052631581, "hta_pct_norm": 70.94339622641508, "colesterol_pct_norm": 79.89690721649484, "score_dep_media_norm": 55.78512396694214, "riesgo_compuesto": 73.2, "municipio_corto": "DOLORES HIDALGO", "pct_semirural": 45.3, "trigliceridos_pct": 0, "zona": "Rural"}, {"municipio": "GUANAJUATO", "n": 24, "año": 2022, "diabetes_pct": 4.2, "hta_pct": 16.7, "colesterol_pct": 4.2, "score_dep_media": 9.5, "edad_media": 44.8, "pct_mujeres": 62.5, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 8.3, "diabetes_pct_norm": 0.0, "hta_pct_norm": 26.79245283018868, "colesterol_pct_norm": 5.154639175257731, "score_dep_media_norm": 0.0, "riesgo_compuesto": 8.0, "municipio_corto": "GUANAJUATO", "pct_semirural": 100.0, "trigliceridos_pct": 0, "zona": "Semi-urbano"}, {"municipio": "HUANÍMARO", "n": 33, "año": 2022, "diabetes_pct": 9.1, "hta_pct": 18.2, "colesterol_pct": 18.2, "score_dep_media": 11.03, "edad_media": 51.3, "pct_mujeres": 60.6, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 9.1, "diabetes_pct_norm": 32.23684210526316, "hta_pct_norm": 32.45283018867924, "colesterol_pct_norm": 77.31958762886597, "score_dep_media_norm": 63.223140495867746, "riesgo_compuesto": 51.3, "municipio_corto": "HUANÍMARO", "pct_semirural": 0.0, "trigliceridos_pct": 0, "zona": "Rural"}, {"municipio": "IRAPUATO", "n": 86, "año": 2022, "diabetes_pct": 18.6, "hta_pct": 24.4, "colesterol_pct": 20.9, "score_dep_media": 11.19, "edad_media": 48.4, "pct_mujeres": 72.1, "pct_rural": 0.0, "pct_urbano": 100.0, "fuma_pct": 16.3, "diabetes_pct_norm": 94.73684210526318, "hta_pct_norm": 55.84905660377358, "colesterol_pct_norm": 91.23711340206184, "score_dep_media_norm": 69.83471074380164, "riesgo_compuesto": 77.9, "municipio_corto": "IRAPUATO", "pct_semirural": 0.0, "trigliceridos_pct": 0, "zona": "Urbano"}, {"municipio": "JARAL DEL PROGRESO", "n": 31, "año": 2022, "diabetes_pct": 19.4, "hta_pct": 29.0, "colesterol_pct": 22.6, "score_dep_media": 9.9, "edad_media": 44.2, "pct_mujeres": 64.5, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 3.2, "diabetes_pct_norm": 100.0, "hta_pct_norm": 73.20754716981132, "colesterol_pct_norm": 100.0, "score_dep_media_norm": 16.528925619834727, "riesgo_compuesto": 72.4, "municipio_corto": "JARAL DEL PROGRESO", "pct_semirural": 100.0, "trigliceridos_pct": 0, "zona": "Semi-urbano"}, {"municipio": "LEÓN", "n": 332, "año": 2022, "diabetes_pct": 13.3, "hta_pct": 21.1, "colesterol_pct": 17.5, "score_dep_media": 11.21, "edad_media": 46.2, "pct_mujeres": 60.8, "pct_rural": 12.3, "pct_urbano": 87.7, "fuma_pct": 21.7, "diabetes_pct_norm": 59.86842105263159, "hta_pct_norm": 43.39622641509435, "colesterol_pct_norm": 73.71134020618555, "score_dep_media_norm": 70.66115702479343, "riesgo_compuesto": 61.9, "municipio_corto": "LEÓN", "pct_semirural": 0.0, "trigliceridos_pct": 0, "zona": "Urbano"}, {"municipio": "PÉNJAMO", "n": 44, "año": 2022, "diabetes_pct": 18.2, "hta_pct": 20.5, "colesterol_pct": 6.8, "score_dep_media": 10.52, "edad_media": 45.3, "pct_mujeres": 72.7, "pct_rural": 54.5, "pct_urbano": 0.0, "fuma_pct": 20.5, "diabetes_pct_norm": 92.10526315789474, "hta_pct_norm": 41.132075471698116, "colesterol_pct_norm": 18.55670103092783, "score_dep_media_norm": 42.1487603305785, "riesgo_compuesto": 48.5, "municipio_corto": "PÉNJAMO", "pct_semirural": 45.5, "trigliceridos_pct": 0, "zona": "Rural"}, {"municipio": "SALAMANCA", "n": 77, "año": 2022, "diabetes_pct": 10.4, "hta_pct": 16.9, "colesterol_pct": 20.8, "score_dep_media": 11.92, "edad_media": 46.4, "pct_mujeres": 64.9, "pct_rural": 48.1, "pct_urbano": 16.9, "fuma_pct": 9.1, "diabetes_pct_norm": 40.789473684210535, "hta_pct_norm": 27.54716981132075, "colesterol_pct_norm": 90.72164948453609, "score_dep_media_norm": 100.0, "riesgo_compuesto": 64.8, "municipio_corto": "SALAMANCA", "pct_semirural": 35.0, "trigliceridos_pct": 0, "zona": "Semi-urbano"}, {"municipio": "SAN FELIPE", "n": 52, "año": 2022, "diabetes_pct": 13.5, "hta_pct": 21.2, "colesterol_pct": 19.2, "score_dep_media": 11.6, "edad_media": 45.9, "pct_mujeres": 76.9, "pct_rural": 63.5, "pct_urbano": 0.0, "fuma_pct": 7.7, "diabetes_pct_norm": 61.184210526315795, "hta_pct_norm": 43.77358490566038, "colesterol_pct_norm": 82.4742268041237, "score_dep_media_norm": 86.77685950413222, "riesgo_compuesto": 68.6, "municipio_corto": "SAN FELIPE", "pct_semirural": 36.5, "trigliceridos_pct": 0, "zona": "Rural"}, {"municipio": "SAN JOSÉ ITURBIDE", "n": 43, "año": 2022, "diabetes_pct": 11.6, "hta_pct": 14.0, "colesterol_pct": 16.3, "score_dep_media": 11.09, "edad_media": 44.2, "pct_mujeres": 65.1, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 7.0, "diabetes_pct_norm": 48.68421052631579, "hta_pct_norm": 16.603773584905664, "colesterol_pct_norm": 67.5257731958763, "score_dep_media_norm": 65.70247933884296, "riesgo_compuesto": 49.6, "municipio_corto": "SAN JOSÉ ITURBIDE", "pct_semirural": 0.0, "trigliceridos_pct": 0, "zona": "Rural"}, {"municipio": "SAN LUIS DE LA PAZ", "n": 21, "año": 2022, "diabetes_pct": 9.5, "hta_pct": 23.8, "colesterol_pct": 14.3, "score_dep_media": 9.52, "edad_media": 54.0, "pct_mujeres": 61.9, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 9.5, "diabetes_pct_norm": 34.86842105263158, "hta_pct_norm": 53.58490566037736, "colesterol_pct_norm": 57.21649484536082, "score_dep_media_norm": 0.8264462809917179, "riesgo_compuesto": 36.6, "municipio_corto": "SAN LUIS DE LA PAZ", "pct_semirural": 100.0, "trigliceridos_pct": 0, "zona": "Semi-urbano"}, {"municipio": "SAN MIGUEL DE ALLENDE", "n": 71, "año": 2022, "diabetes_pct": 11.3, "hta_pct": 18.6, "colesterol_pct": 16.9, "score_dep_media": 10.87, "edad_media": 44.2, "pct_mujeres": 62.0, "pct_rural": 50.7, "pct_urbano": 0.0, "fuma_pct": 12.7, "diabetes_pct_norm": 46.71052631578948, "hta_pct_norm": 33.962264150943405, "colesterol_pct_norm": 70.61855670103093, "score_dep_media_norm": 56.61157024793385, "riesgo_compuesto": 52.0, "municipio_corto": "SAN MIGUEL DE ALLENDE", "pct_semirural": 49.3, "trigliceridos_pct": 0, "zona": "Rural"}, {"municipio": "SILAO DE LA VICTORIA", "n": 73, "año": 2022, "diabetes_pct": 9.6, "hta_pct": 12.3, "colesterol_pct": 8.2, "score_dep_media": 11.3, "edad_media": 42.3, "pct_mujeres": 63.0, "pct_rural": 54.8, "pct_urbano": 0.0, "fuma_pct": 19.2, "diabetes_pct_norm": 35.526315789473685, "hta_pct_norm": 10.188679245283023, "colesterol_pct_norm": 25.77319587628865, "score_dep_media_norm": 74.38016528925623, "riesgo_compuesto": 36.5, "municipio_corto": "SILAO", "pct_semirural": 45.2, "trigliceridos_pct": 0, "zona": "Rural"}, {"municipio": "URIANGATO", "n": 34, "año": 2022, "diabetes_pct": 8.8, "hta_pct": 20.6, "colesterol_pct": 17.6, "score_dep_media": 10.65, "edad_media": 46.8, "pct_mujeres": 67.6, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 8.8, "diabetes_pct_norm": 30.263157894736846, "hta_pct_norm": 41.50943396226416, "colesterol_pct_norm": 74.22680412371135, "score_dep_media_norm": 47.520661157024804, "riesgo_compuesto": 48.4, "municipio_corto": "URIANGATO", "pct_semirural": 100.0, "trigliceridos_pct": 0, "zona": "Semi-urbano"}, {"municipio": "VALLE DE SANTIAGO", "n": 36, "año": 2022, "diabetes_pct": 5.6, "hta_pct": 36.1, "colesterol_pct": 22.2, "score_dep_media": 11.53, "edad_media": 49.9, "pct_mujeres": 55.6, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 16.7, "diabetes_pct_norm": 9.21052631578947, "hta_pct_norm": 100.0, "colesterol_pct_norm": 97.93814432989689, "score_dep_media_norm": 83.88429752066114, "riesgo_compuesto": 72.8, "municipio_corto": "VALLE DE SANTIAGO", "pct_semirural": 0.0, "trigliceridos_pct": 0, "zona": "Rural"}, {"municipio": "VILLAGRÁN", "n": 11, "año": 2022, "diabetes_pct": 9.1, "hta_pct": 27.3, "colesterol_pct": 18.2, "score_dep_media": 10.45, "edad_media": 47.7, "pct_mujeres": 54.5, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 36.4, "diabetes_pct_norm": 32.23684210526316, "hta_pct_norm": 66.7924528301887, "colesterol_pct_norm": 77.31958762886597, "score_dep_media_norm": 39.25619834710741, "riesgo_compuesto": 53.9, "municipio_corto": "VILLAGRÁN", "pct_semirural": 100.0, "trigliceridos_pct": 0, "zona": "Semi-urbano"}], "municipios_2021": [{"municipio": "ACÁMBARO", "n": 53, "año": 2021, "diabetes_pct": 9.4, "hta_pct": 24.5, "colesterol_pct": 11.3, "score_dep_media": 11.83, "edad_media": 47.3, "pct_mujeres": 56.6, "pct_rural": 39.6, "pct_urbano": 0.0, "fuma_pct": 22.6, "municipio_corto": "ACÁMBARO"}, {"municipio": "APASEO EL ALTO", "n": 27, "año": 2021, "diabetes_pct": 26.9, "hta_pct": 40.7, "colesterol_pct": 18.5, "score_dep_media": 12.74, "edad_media": 50.9, "pct_mujeres": 66.7, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 11.1, "municipio_corto": "APASEO EL ALTO"}, {"municipio": "APASEO EL GRANDE", "n": 22, "año": 2021, "diabetes_pct": 4.5, "hta_pct": 31.8, "colesterol_pct": 18.2, "score_dep_media": 10.18, "edad_media": 45.9, "pct_mujeres": 72.7, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 4.5, "municipio_corto": "APASEO EL GRANDE"}, {"municipio": "CELAYA", "n": 112, "año": 2021, "diabetes_pct": 13.4, "hta_pct": 22.7, "colesterol_pct": 12.5, "score_dep_media": 11.46, "edad_media": 47.7, "pct_mujeres": 64.3, "pct_rural": 0.0, "pct_urbano": 68.8, "fuma_pct": 17.0, "municipio_corto": "CELAYA"}, {"municipio": "CUERÁMARO", "n": 30, "año": 2021, "diabetes_pct": 10.3, "hta_pct": 16.7, "colesterol_pct": 6.7, "score_dep_media": 10.2, "edad_media": 45.6, "pct_mujeres": 66.7, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 23.3, "municipio_corto": "CUERÁMARO"}, {"municipio": "DOCTOR MORA", "n": 34, "año": 2021, "diabetes_pct": 5.9, "hta_pct": 24.2, "colesterol_pct": 11.8, "score_dep_media": 11.85, "edad_media": 42.7, "pct_mujeres": 67.6, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 2.9, "municipio_corto": "DOCTOR MORA"}, {"municipio": "GUANAJUATO", "n": 55, "año": 2021, "diabetes_pct": 13.0, "hta_pct": 25.5, "colesterol_pct": 12.7, "score_dep_media": 11.35, "edad_media": 43.6, "pct_mujeres": 56.4, "pct_rural": 49.1, "pct_urbano": 0.0, "fuma_pct": 16.4, "municipio_corto": "GUANAJUATO"}, {"municipio": "IRAPUATO", "n": 107, "año": 2021, "diabetes_pct": 13.1, "hta_pct": 23.4, "colesterol_pct": 15.0, "score_dep_media": 10.0, "edad_media": 47.7, "pct_mujeres": 68.2, "pct_rural": 0.0, "pct_urbano": 80.4, "fuma_pct": 18.7, "municipio_corto": "IRAPUATO"}, {"municipio": "JERÉCUARO", "n": 26, "año": 2021, "diabetes_pct": 7.7, "hta_pct": 26.9, "colesterol_pct": 19.2, "score_dep_media": 11.85, "edad_media": 49.6, "pct_mujeres": 69.2, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 15.4, "municipio_corto": "JERÉCUARO"}, {"municipio": "LEÓN", "n": 276, "año": 2021, "diabetes_pct": 10.2, "hta_pct": 20.2, "colesterol_pct": 18.1, "score_dep_media": 11.09, "edad_media": 44.9, "pct_mujeres": 65.6, "pct_rural": 0.0, "pct_urbano": 100.0, "fuma_pct": 25.4, "municipio_corto": "LEÓN"}, {"municipio": "OCAMPO", "n": 37, "año": 2021, "diabetes_pct": 5.4, "hta_pct": 16.7, "colesterol_pct": 10.8, "score_dep_media": 9.73, "edad_media": 42.0, "pct_mujeres": 56.8, "pct_rural": 67.6, "pct_urbano": 0.0, "fuma_pct": 10.8, "municipio_corto": "OCAMPO"}, {"municipio": "PURÍSIMA DEL RINCÓN", "n": 26, "año": 2021, "diabetes_pct": 15.4, "hta_pct": 15.4, "colesterol_pct": 15.4, "score_dep_media": 12.35, "edad_media": 55.4, "pct_mujeres": 57.7, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 19.2, "municipio_corto": "PURÍSIMA DEL RINCÓN"}, {"municipio": "PÉNJAMO", "n": 27, "año": 2021, "diabetes_pct": 25.9, "hta_pct": 22.2, "colesterol_pct": 25.9, "score_dep_media": 12.56, "edad_media": 51.4, "pct_mujeres": 59.3, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 7.4, "municipio_corto": "PÉNJAMO"}, {"municipio": "ROMITA", "n": 22, "año": 2021, "diabetes_pct": 0.0, "hta_pct": 9.1, "colesterol_pct": 18.2, "score_dep_media": 10.09, "edad_media": 42.7, "pct_mujeres": 59.1, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 31.8, "municipio_corto": "ROMITA"}, {"municipio": "SALVATIERRA", "n": 26, "año": 2021, "diabetes_pct": 7.7, "hta_pct": 26.9, "colesterol_pct": 3.8, "score_dep_media": 11.85, "edad_media": 53.8, "pct_mujeres": 69.2, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 3.8, "municipio_corto": "SALVATIERRA"}, {"municipio": "SAN FELIPE", "n": 27, "año": 2021, "diabetes_pct": 11.5, "hta_pct": 20.0, "colesterol_pct": 11.1, "score_dep_media": 10.85, "edad_media": 44.0, "pct_mujeres": 59.3, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 14.8, "municipio_corto": "SAN FELIPE"}, {"municipio": "SAN FRANCISCO DEL RINCÓN", "n": 22, "año": 2021, "diabetes_pct": 4.5, "hta_pct": 9.1, "colesterol_pct": 0.0, "score_dep_media": 10.59, "edad_media": 41.5, "pct_mujeres": 63.6, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 9.1, "municipio_corto": "SAN FRANCISCO DEL RINCÓN"}, {"municipio": "SAN JOSÉ ITURBIDE", "n": 15, "año": 2021, "diabetes_pct": 6.7, "hta_pct": 26.7, "colesterol_pct": 13.3, "score_dep_media": 10.73, "edad_media": 51.2, "pct_mujeres": 80.0, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 6.7, "municipio_corto": "SAN JOSÉ ITURBIDE"}, {"municipio": "SAN LUIS DE LA PAZ", "n": 22, "año": 2021, "diabetes_pct": 18.2, "hta_pct": 9.1, "colesterol_pct": 18.2, "score_dep_media": 10.64, "edad_media": 39.7, "pct_mujeres": 72.7, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 9.1, "municipio_corto": "SAN LUIS DE LA PAZ"}, {"municipio": "SILAO DE LA VICTORIA", "n": 36, "año": 2021, "diabetes_pct": 5.6, "hta_pct": 16.7, "colesterol_pct": 8.3, "score_dep_media": 10.11, "edad_media": 47.3, "pct_mujeres": 55.6, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 11.1, "municipio_corto": "SILAO"}, {"municipio": "TARIMORO", "n": 31, "año": 2021, "diabetes_pct": 19.4, "hta_pct": 35.5, "colesterol_pct": 25.8, "score_dep_media": 10.48, "edad_media": 47.5, "pct_mujeres": 64.5, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 6.5, "municipio_corto": "TARIMORO"}, {"municipio": "URIANGATO", "n": 23, "año": 2021, "diabetes_pct": 13.0, "hta_pct": 21.7, "colesterol_pct": 26.1, "score_dep_media": 10.3, "edad_media": 46.0, "pct_mujeres": 56.5, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 4.3, "municipio_corto": "URIANGATO"}, {"municipio": "VICTORIA", "n": 30, "año": 2021, "diabetes_pct": 3.3, "hta_pct": 6.7, "colesterol_pct": 6.7, "score_dep_media": 8.87, "edad_media": 39.8, "pct_mujeres": 53.3, "pct_rural": 100.0, "pct_urbano": 0.0, "fuma_pct": 26.7, "municipio_corto": "VICTORIA"}, {"municipio": "VILLAGRÁN", "n": 29, "año": 2021, "diabetes_pct": 6.9, "hta_pct": 17.2, "colesterol_pct": 13.8, "score_dep_media": 11.28, "edad_media": 48.1, "pct_mujeres": 58.6, "pct_rural": 0.0, "pct_urbano": 0.0, "fuma_pct": 6.9, "municipio_corto": "VILLAGRÁN"}], "sexo_enf_2022": {"Hombre": {"diabetes": 11.6, "hta": 16.3, "colesterol": 13.3, "trigliceridos": 11.9}, "Mujer": {"diabetes": 13.9, "hta": 22.8, "colesterol": 17.6, "trigliceridos": 15.3}}, "urbanidad_enf_2022": {"Rural": {"n": 416, "diabetes": 12.3, "hta": 18.3, "score_dep": 11.23}, "Semi-urbano": {"n": 355, "diabetes": 12.7, "hta": 22.6, "score_dep": 10.72}, "Urbano": {"n": 456, "diabetes": 14.3, "hta": 20.8, "score_dep": 11.06}}, "edad_enf_2022": [{"grupo": "20-29", "n": 250, "diabetes": 0.4, "hta": 3.6, "score_dep": 10.67}, {"grupo": "30-39", "n": 216, "diabetes": 1.4, "hta": 5.6, "score_dep": 10.33}, {"grupo": "40-49", "n": 258, "diabetes": 12.0, "hta": 16.7, "score_dep": 10.62}, {"grupo": "50-59", "n": 201, "diabetes": 18.4, "hta": 27.9, "score_dep": 11.71}, {"grupo": "60-69", "n": 169, "diabetes": 30.2, "hta": 35.5, "score_dep": 11.29}, {"grupo": "70-79", "n": 99, "diabetes": 30.3, "hta": 50.5, "score_dep": 11.72}, {"grupo": "80+", "n": 34, "diabetes": 23.5, "hta": 61.8, "score_dep": 13.56}], "state_avg_2022": {"diabetes": 13.1, "hta": 20.5, "colesterol": 16.1, "trigliceridos": 14.1, "score_dep": 11.0, "fuma": 15.1}};
+const AVG = D.state_avg_2022;
+
+// ── Palette ────────────────────────────────────────────────────────────────
+const C = {blue:'#4f8ef7',green:'#34c9a0',orange:'#f5a623',
+  red:'#e05c5c',purple:'#9b72ef',teal:'#26c6da',muted:'#7b7f9a',grid:'#2a2d44',text:'#e8eaf0'};
+const IND_CONFIG = {
+  diabetes:   {label:'Diabetes %',   color:C.blue,   field:'diabetes_pct'},
+  hta:        {label:'Hipertensión %',color:C.red,    field:'hta_pct'},
+  colesterol: {label:'Colesterol %',  color:C.orange,  field:'colesterol_pct'},
+  score_dep:  {label:'Score depresivo',color:C.purple, field:'score_dep_media'},
+  fuma:       {label:'Tabaquismo %',  color:C.teal,   field:'fuma_pct'},
+};
+Chart.defaults.color = C.muted;
+Chart.defaults.borderColor = C.grid;
+Chart.defaults.font.family = 'Inter,system-ui,sans-serif';
+Chart.defaults.font.size = 10.5;
+const TT = {backgroundColor:'#151722',borderColor:'#2a2d44',borderWidth:1,
+  titleColor:'#e8eaf0',bodyColor:'#7b7f9a',padding:10,cornerRadius:8};
+
+let activeInd = 'diabetes';
+let sortCol = 'riesgo_compuesto', sortAsc = false;
+let selectedRows = [];
+let radarChartInst = null, compareRadarInst = null, compareBarInst = null;
+let munRankChartInst = null;
+
+// ── Tab navigation ─────────────────────────────────────────────────────────
+function switchTab(id, el){
+  document.querySelectorAll('.tab-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('indBar').style.display = id === 'municipios' ? 'flex' : 'none';
+}
+
+// ── Indicator selector ─────────────────────────────────────────────────────
+function selectIndicator(el){
+  const ind = el.dataset.ind;
+  const color = el.dataset.color;
+  activeInd = ind;
+  document.querySelectorAll('.ind-pill').forEach(p=>{
+    const c = p.dataset.color;
+    if(p===el){
+      p.classList.add('active');
+      p.style.background = hexAlpha(c,.18);
+      p.style.color = c;
+      p.style.borderColor = c;
+    } else {
+      p.classList.remove('active');
+      p.style.background = hexAlpha(p.dataset.color,.05);
+      p.style.color = 'var(--muted)';
+      p.style.borderColor = 'transparent';
+    }
+  });
+  updateMunCharts();
+  renderTable();
+  // Update header
+  const cfg = IND_CONFIG[ind];
+  document.getElementById('munTitle').textContent = `Ranking por ${cfg.label.replace(' %','')} — Municipios`;
+  document.getElementById('rankChartTitle').textContent = `Top 10 — ${cfg.label}`;
+  // Highlight table column
+  ['diabetes','hta','col','dep','fuma'].forEach(k=>{
+    const el2 = document.getElementById('th-'+k);
+    if(el2) el2.style.color = '';
+  });
+  const map = {diabetes:'th-diabetes',hta:'th-hta',colesterol:'th-col',score_dep:'th-dep',fuma:'th-fuma'};
+  if(map[ind]) document.getElementById(map[ind]).style.color = color;
+}
+
+function selectIndicatorByName(name){
+  const pill = document.querySelector(`.ind-pill[data-ind="${name}"]`);
+  if(pill) selectIndicator(pill);
+}
+
+function hexAlpha(hex, a){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// ── KPI counter animation ──────────────────────────────────────────────────
+function animateCounters(){
+  document.querySelectorAll('.counter').forEach(el=>{
+    const target = parseFloat(el.dataset.val);
+    let start = 0, dur = 1200, startTime = null;
+    function step(ts){
+      if(!startTime) startTime = ts;
+      const p = Math.min((ts-startTime)/dur,1);
+      const ease = 1-Math.pow(1-p,3);
+      el.textContent = (target*ease).toFixed(1);
+      if(p<1) requestAnimationFrame(step);
+      else el.textContent = target.toFixed(1);
+    }
+    requestAnimationFrame(step);
+  });
+}
+setTimeout(animateCounters, 200);
+
+// ── Static charts ──────────────────────────────────────────────────────────
+const td = D.tendencias;
+new Chart(document.getElementById('chartTrend'),{
+  type:'bar',
+  data:{labels:['Diabetes','Hipertensión','Colesterol','Triglicéridos'],
+    datasets:[
+      {label:'2021',data:[td.diabetes[0],td.hta[0],td.colesterol[0],td.trigliceridos[0]],
+        backgroundColor:C.blue+'99',borderColor:C.blue,borderWidth:2,borderRadius:4},
+      {label:'2022',data:[td.diabetes[1],td.hta[1],td.colesterol[1],td.trigliceridos[1]],
+        backgroundColor:C.green+'99',borderColor:C.green,borderWidth:2,borderRadius:4},
+    ]},
+  options:{responsive:true,plugins:{legend:{position:'top'},tooltip:{...TT}},
+    scales:{y:{ticks:{callback:v=>v+'%'},grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+
+const ageD = D.edad_enf_2022;
+new Chart(document.getElementById('chartAge'),{
+  type:'bar',
+  data:{labels:ageD.map(d=>d.grupo),
+    datasets:[
+      {label:'Diabetes %',data:ageD.map(d=>d.diabetes),backgroundColor:C.blue+'bb',borderRadius:3},
+      {label:'HTA %',     data:ageD.map(d=>d.hta),     backgroundColor:C.red+'bb', borderRadius:3},
+    ]},
+  options:{responsive:true,plugins:{legend:{position:'top'},tooltip:{...TT}},
+    scales:{y:{ticks:{callback:v=>v+'%'},grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+
+const urb = D.urbanidad_enf_2022;
+const ul = Object.keys(urb);
+new Chart(document.getElementById('chartUrb'),{
+  type:'bar',
+  data:{labels:ul,
+    datasets:[
+      {label:'Diabetes %',data:ul.map(k=>urb[k].diabetes),backgroundColor:C.blue+'bb',borderRadius:4},
+      {label:'HTA %',     data:ul.map(k=>urb[k].hta),     backgroundColor:C.red+'bb', borderRadius:4},
+    ]},
+  options:{responsive:true,plugins:{legend:{position:'top'},tooltip:{...TT}},
+    scales:{y:{ticks:{callback:v=>v+'%'},grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+
+const sx = D.sexo_enf_2022;
+new Chart(document.getElementById('chartSexo'),{
+  type:'bar',
+  data:{labels:['Diabetes','HTA','Colesterol','Triglicéridos'],
+    datasets:[
+      {label:'Hombre',data:[sx.Hombre.diabetes,sx.Hombre.hta,sx.Hombre.colesterol,sx.Hombre.trigliceridos],backgroundColor:'#4C72B0bb',borderRadius:4},
+      {label:'Mujer', data:[sx.Mujer.diabetes, sx.Mujer.hta, sx.Mujer.colesterol, sx.Mujer.trigliceridos], backgroundColor:'#DD8452bb',borderRadius:4},
+    ]},
+  options:{responsive:true,plugins:{legend:{position:'top'},tooltip:{...TT}},
+    scales:{y:{ticks:{callback:v=>v+'%'},grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+
+new Chart(document.getElementById('chartUrbDep'),{
+  type:'bar',
+  data:{labels:ul,datasets:[{
+    label:'Score CES-D',data:ul.map(k=>urb[k].score_dep),
+    backgroundColor:[C.green+'bb',C.orange+'bb',C.blue+'bb'],borderRadius:4}]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{...TT}},
+    scales:{y:{min:8,grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+
+// Salud mental tab
+const munDepSorted = [...D.municipios_2022].sort((a,b)=>b.score_dep_media-a.score_dep_media);
+new Chart(document.getElementById('chartDepMun'),{
+  type:'bar',
+  data:{labels:munDepSorted.map(d=>d.municipio_corto),
+    datasets:[{label:'Score depresivo',data:munDepSorted.map(d=>d.score_dep_media),
+      backgroundColor:munDepSorted.map(d=>d.score_dep_media>12?C.red+'bb':d.score_dep_media>10?C.orange+'bb':C.green+'bb'),
+      borderRadius:3}]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{...TT}},
+    scales:{y:{min:7,max:16,grid:{color:C.grid}},x:{grid:{display:false},ticks:{font:{size:9},maxRotation:45}}}}
+});
+
+new Chart(document.getElementById('chartDepTrend'),{
+  type:'bar',
+  data:{labels:['Media','Mediana aprox.','DE'],
+    datasets:[
+      {label:'2021',data:[10.98,10,4.54],backgroundColor:C.blue+'99',borderRadius:4},
+      {label:'2022',data:[11.02,10,4.09],backgroundColor:C.green+'99',borderRadius:4},
+    ]},
+  options:{responsive:true,plugins:{legend:{position:'top'},tooltip:{...TT}},
+    scales:{y:{grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+
+new Chart(document.getElementById('chartDepAge'),{
+  type:'line',
+  data:{labels:ageD.map(d=>d.grupo),
+    datasets:[{label:'Score CES-D',data:ageD.map(d=>d.score_dep),
+      borderColor:C.purple,backgroundColor:C.purple+'22',tension:.4,fill:true,pointRadius:4}]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{...TT}},
+    scales:{y:{min:7,max:15,grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+
+new Chart(document.getElementById('chartDepSexo'),{
+  type:'bar',
+  data:{labels:['2021','2022'],
+    datasets:[
+      {label:'Hombre',data:[10.2,10.4],backgroundColor:'#4C72B0bb',borderRadius:4},
+      {label:'Mujer', data:[11.5,11.4],backgroundColor:'#DD8452bb',borderRadius:4},
+    ]},
+  options:{responsive:true,plugins:{legend:{position:'top'},tooltip:{...TT}},
+    scales:{y:{min:8,grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+
+new Chart(document.getElementById('chartSuic'),{
+  type:'bar',
+  data:{labels:['Hombre','Mujer'],
+    datasets:[
+      {label:'2021',data:[5.9,10.6],backgroundColor:C.blue+'99',borderRadius:4},
+      {label:'2022',data:[5.6,7.5], backgroundColor:C.green+'99',borderRadius:4},
+    ]},
+  options:{responsive:true,plugins:{legend:{position:'top'},tooltip:{...TT}},
+    scales:{y:{ticks:{callback:v=>v+'%'},grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+
+// Estilos de vida
+new Chart(document.getElementById('chartTabTrend'),{
+  type:'bar',
+  data:{labels:['2020','2021','2022'],
+    datasets:[{label:'% fuma',data:[15.5,17.1,15.1],
+      backgroundColor:[C.red+'99',C.blue+'99',C.green+'99'],borderRadius:4}]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{...TT}},
+    scales:{y:{ticks:{callback:v=>v+'%'},grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+
+new Chart(document.getElementById('chartAlcTrend'),{
+  type:'bar',
+  data:{labels:['2020','2021','2022'],
+    datasets:[{label:'% consume alcohol',data:[40.7,46.0,46.9],
+      backgroundColor:[C.red+'99',C.blue+'99',C.green+'99'],borderRadius:4}]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{...TT}},
+    scales:{y:{ticks:{callback:v=>v+'%'},grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+
+new Chart(document.getElementById('chartTabSexo'),{
+  type:'bar',
+  data:{labels:['2020','2021','2022'],
+    datasets:[
+      {label:'Hombre',data:[27.4,32.3,28.8],backgroundColor:'#4C72B0bb',borderRadius:4},
+      {label:'Mujer', data:[7.2,8.5,7.7],   backgroundColor:'#DD8452bb',borderRadius:4},
+    ]},
+  options:{responsive:true,plugins:{legend:{position:'top'},tooltip:{...TT}},
+    scales:{y:{ticks:{callback:v=>v+'%'},grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+
+// ── Dynamic municipality charts ────────────────────────────────────────────
+function updateMunCharts(){
+  const cfg = IND_CONFIG[activeInd];
+  const sorted = [...D.municipios_2022].sort((a,b)=>b[cfg.field]-a[cfg.field]).slice(0,10);
+
+  if(munRankChartInst) munRankChartInst.destroy();
+  munRankChartInst = new Chart(document.getElementById('chartMunRank'),{
+    type:'bar',
+    data:{
+      labels: sorted.map(d=>d.municipio_corto),
+      datasets:[{
+        label: cfg.label,
+        data: sorted.map(d=>d[cfg.field]),
+        backgroundColor: hexAlpha(cfg.color,.7),
+        borderColor: cfg.color,
+        borderWidth:1,
+        borderRadius:4,
+      }]
+    },
+    options:{
+      indexAxis:'y',responsive:true,
+      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{
+        label: ctx=>' '+ctx.parsed.x+(activeInd==='score_dep'?''  :'%')
+      }}},
+      scales:{
+        x:{ticks:{callback:v=>v+(activeInd==='score_dep'?'':'%')},grid:{color:C.grid}},
+        y:{grid:{display:false},ticks:{font:{size:10}}}
+      },
+      onClick: (_,els)=>{
+        if(els.length){openDetail(sorted[els[0].index].municipio)}
+      }
+    }
+  });
+
+  // Riesgo chart (always compuesto)
+  const riskSorted = [...D.municipios_2022].sort((a,b)=>b.riesgo_compuesto-a.riesgo_compuesto);
+  const riskChart = Chart.getChart('chartRiesgo');
+  if(riskChart) riskChart.destroy();
+  new Chart(document.getElementById('chartRiesgo'),{
+    type:'bar',
+    data:{
+      labels: riskSorted.map(d=>d.municipio_corto),
+      datasets:[{
+        label:'Índice de riesgo',
+        data: riskSorted.map(d=>d.riesgo_compuesto),
+        backgroundColor: riskSorted.map(d=>d.riesgo_compuesto>=70?C.red+'cc':d.riesgo_compuesto>=50?C.orange+'cc':C.green+'cc'),
+        borderRadius:4,
+      }]
+    },
+    options:{
+      indexAxis:'y',responsive:true,
+      plugins:{legend:{display:false},tooltip:{...TT}},
+      scales:{
+        x:{min:0,max:100,grid:{color:C.grid}},
+        y:{grid:{display:false},ticks:{font:{size:10}}}
+      },
+      onClick: (_,els)=>{
+        if(els.length){openDetail(riskSorted[els[0].index].municipio)}
+      }
+    }
+  });
+}
+updateMunCharts();
+
+// ── Table ──────────────────────────────────────────────────────────────────
+function setSort(col){
+  if(sortCol===col) sortAsc=!sortAsc; else { sortCol=col; sortAsc=false; }
+  renderTable();
+}
+
+function riskBadge(v){
+  if(v>=70) return `<span class="risk-badge risk-hi">Alto ${v}</span>`;
+  if(v>=50) return `<span class="risk-badge risk-md">Medio ${v}</span>`;
+  return `<span class="risk-badge risk-lo">Bajo ${v}</span>`;
+}
+
+function miniBar(val, max, color){
+  const w = Math.round(val/max*100);
+  const isBold = activeInd !== 'score_dep' ? false : false;
+  return `<div class="mini-bar-wrap">
+    <span style="min-width:30px;text-align:right;font-size:11px">${val}${activeInd==='score_dep'&&false?'':'%'}</span>
+    <div class="mini-bar-bg"><div class="mini-bar" style="width:${w}%;background:${color}"></div></div>
+  </div>`;
+}
+
+function renderTable(){
+  const query = document.getElementById('searchBox').value.toLowerCase();
+  const zona  = document.getElementById('filterZona').value;
+  const cfg   = IND_CONFIG[activeInd];
+
+  let rows = [...D.municipios_2022];
+  if(query) rows = rows.filter(r=>r.municipio_corto.toLowerCase().includes(query));
+  if(zona!=='all') rows = rows.filter(r=>r.zona===zona);
+
+  rows.sort((a,b)=>{
+    const va=a[sortCol], vb=b[sortCol];
+    const r = typeof va==='string' ? va.localeCompare(vb) : vb-va;
+    return sortAsc ? -r : r;
+  });
+
+  const maxD=Math.max(...rows.map(r=>r.diabetes_pct));
+  const maxH=Math.max(...rows.map(r=>r.hta_pct));
+  const maxC=Math.max(...rows.map(r=>r.colesterol_pct));
+  const maxS=Math.max(...rows.map(r=>r.score_dep_media));
+  const maxF=Math.max(...rows.map(r=>r.fuma_pct));
+
+  document.getElementById('munTbody').innerHTML = rows.map((r,i)=>{
+    const isSelected = selectedRows.includes(r.municipio);
+    const chk = isSelected ? 'checked' : '';
+    return `<tr class="${isSelected?'selected-row':''}" onclick="handleRowClick(event,'${r.municipio}')">
+      <td class="chk-cell" onclick="event.stopPropagation()">
+        <input type="checkbox" class="row-chk" ${chk} onchange="toggleSelect('${r.municipio}',this)">
+      </td>
+      <td><span class="mun-name">${r.municipio_corto}</span><span class="zone-tag">${r.zona} · n=${r.n}</span></td>
+      <td style="color:var(--muted)">${r.n}</td>
+      <td style="${activeInd==='diabetes'?`font-weight:700;color:${C.blue}`:''}">
+        ${miniBar(r.diabetes_pct,maxD,activeInd==='diabetes'?cfg.color:C.blue+'66')}
+      </td>
+      <td style="${activeInd==='hta'?`font-weight:700;color:${C.red}`:''}">
+        ${miniBar(r.hta_pct,maxH,activeInd==='hta'?cfg.color:C.red+'66')}
+      </td>
+      <td style="${activeInd==='colesterol'?`font-weight:700;color:${C.orange}`:''}">
+        ${miniBar(r.colesterol_pct,maxC,activeInd==='colesterol'?cfg.color:C.orange+'66')}
+      </td>
+      <td style="${activeInd==='score_dep'?`font-weight:700;color:${C.purple}`:''}">
+        <span style="font-size:11px">${r.score_dep_media}</span>
+      </td>
+      <td style="${activeInd==='fuma'?`font-weight:700;color:${C.teal}`:''}">
+        ${miniBar(r.fuma_pct,maxF,activeInd==='fuma'?cfg.color:C.teal+'66')}
+      </td>
+      <td>${riskBadge(r.riesgo_compuesto)}</td>
+    </tr>`;
+  }).join('');
+}
+renderTable();
+
+// ── Row selection / compare ────────────────────────────────────────────────
+function toggleSelect(mun, chk){
+  if(chk.checked){
+    if(selectedRows.length>=2){ chk.checked=false; return; }
+    selectedRows.push(mun);
+  } else {
+    selectedRows = selectedRows.filter(m=>m!==mun);
+  }
+  renderTable();
+  const btn = document.getElementById('compareBtn');
+  if(selectedRows.length===2){ btn.classList.add('visible'); btn.textContent='⚖ Comparar: '+selectedRows.map(m=>D.municipios_2022.find(x=>x.municipio===m)?.municipio_corto).join(' vs '); }
+  else btn.classList.remove('visible');
+}
+
+function handleRowClick(e, mun){
+  if(e.target.type==='checkbox') return;
+  openDetail(mun);
+}
+
+// ── Detail Panel ───────────────────────────────────────────────────────────
+function openDetail(munName){
+  const m = D.municipios_2022.find(x=>x.municipio===munName);
+  if(!m) return;
+
+  document.getElementById('panelTitle').textContent = m.municipio_corto;
+  document.getElementById('panelSub').textContent = `${m.zona} · n = ${m.n} · Riesgo: ${m.riesgo_compuesto}`;
+
+  // KPI cards
+  const panelKpis = [
+    {lbl:'Diabetes',    val:m.diabetes_pct,    unit:'%', avg:AVG.diabetes,   color:C.blue},
+    {lbl:'Hipertensión',val:m.hta_pct,         unit:'%', avg:AVG.hta,        color:C.red},
+    {lbl:'Colesterol',  val:m.colesterol_pct,  unit:'%', avg:AVG.colesterol, color:C.orange},
+    {lbl:'Score dep.',  val:m.score_dep_media,  unit:'',  avg:AVG.score_dep,  color:C.purple},
+    {lbl:'Tabaquismo',  val:m.fuma_pct,         unit:'%', avg:AVG.fuma,       color:C.teal},
+    {lbl:'% Mujeres',   val:m.pct_mujeres,      unit:'%', avg:null,           color:C.green},
+  ];
+
+  document.getElementById('panelKpis').innerHTML = panelKpis.map(k=>{
+    const delta = k.avg!==null ? (k.val-k.avg).toFixed(1) : null;
+    const dStr  = delta!==null ? `<div class="panel-kpi-vs">${delta>0?'▲ +'+delta:'▼ '+delta} vs estado</div>` : '';
+    return `<div class="panel-kpi">
+      <div class="panel-kpi-lbl">${k.lbl}</div>
+      <div class="panel-kpi-val" style="color:${k.color}">${k.val}${k.unit}</div>
+      ${dStr}
+    </div>`;
+  }).join('');
+
+  // Radar chart
+  if(radarChartInst) radarChartInst.destroy();
+  const labels = ['Diabetes','HTA','Colesterol','Dep.','Tabaquismo'];
+  const mVals  = [m.diabetes_pct,  m.hta_pct,  m.colesterol_pct,  m.score_dep_media,  m.fuma_pct];
+  const aVals  = [AVG.diabetes,     AVG.hta,     AVG.colesterol,     AVG.score_dep,       AVG.fuma];
+  // Normalize to 0-100 for radar readability
+  const maxes  = [25, 40, 25, 20, 35];
+  const norm   = (v,mx)=>Math.round(v/mx*100);
+
+  radarChartInst = new Chart(document.getElementById('radarChart'),{
+    type:'radar',
+    data:{
+      labels,
+      datasets:[
+        {label:m.municipio_corto, data:mVals.map((v,i)=>norm(v,maxes[i])),
+          borderColor:C.blue, backgroundColor:C.blue+'33',pointBackgroundColor:C.blue,pointRadius:4},
+        {label:'Promedio estatal', data:aVals.map((v,i)=>norm(v,maxes[i])),
+          borderColor:C.muted, backgroundColor:C.muted+'18',borderDash:[4,4],pointBackgroundColor:C.muted,pointRadius:3},
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{position:'bottom',labels:{font:{size:10}}},tooltip:{...TT}},
+      scales:{r:{
+        min:0,max:100,
+        ticks:{display:false},
+        grid:{color:C.grid},
+        pointLabels:{color:C.text,font:{size:10}},
+        angleLines:{color:C.grid},
+      }}
+    }
+  });
+
+  document.getElementById('panelExtra').innerHTML = `
+    <div style="margin-top:4px;padding-top:14px;border-top:1px solid var(--border)">
+      <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Composición de la muestra</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px">
+        <div>Edad media: <strong>${m.edad_media} años</strong></div>
+        <div>% Mujeres: <strong>${m.pct_mujeres}%</strong></div>
+        <div>% Rural: <strong>${m.pct_rural}%</strong></div>
+        <div>% Urbano: <strong>${m.pct_urbano}%</strong></div>
+      </div>
+    </div>`;
+
+  document.getElementById('detailPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeDetail(){
+  document.getElementById('detailPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+// ── Comparison modal ───────────────────────────────────────────────────────
+function openCompare(){
+  if(selectedRows.length!==2) return;
+  const [a,b] = selectedRows.map(n=>D.municipios_2022.find(x=>x.municipio===n));
+
+  document.getElementById('compareNames').innerHTML = [
+    `<span class="compare-name-badge" style="background:${C.blue}22;color:${C.blue};border:1px solid ${C.blue}55">${a.municipio_corto}</span>`,
+    `<span style="color:var(--muted);align-self:center">vs</span>`,
+    `<span class="compare-name-badge" style="background:${C.orange}22;color:${C.orange};border:1px solid ${C.orange}55">${b.municipio_corto}</span>`,
+  ].join('');
+
+  const labels = ['Diabetes','HTA','Colesterol','Score dep.','Tabaquismo'];
+  const aVals  = [a.diabetes_pct,a.hta_pct,a.colesterol_pct,a.score_dep_media,a.fuma_pct];
+  const bVals  = [b.diabetes_pct,b.hta_pct,b.colesterol_pct,b.score_dep_media,b.fuma_pct];
+  const avgV   = [AVG.diabetes,  AVG.hta,  AVG.colesterol,  AVG.score_dep,   AVG.fuma];
+  const maxes  = [25,40,25,20,35];
+  const norm   = (v,mx)=>Math.round(v/mx*100);
+
+  if(compareRadarInst) compareRadarInst.destroy();
+  compareRadarInst = new Chart(document.getElementById('compareRadar'),{
+    type:'radar',
+    data:{labels,datasets:[
+      {label:a.municipio_corto,data:aVals.map((v,i)=>norm(v,maxes[i])),
+        borderColor:C.blue,backgroundColor:C.blue+'33',pointBackgroundColor:C.blue,pointRadius:4},
+      {label:b.municipio_corto,data:bVals.map((v,i)=>norm(v,maxes[i])),
+        borderColor:C.orange,backgroundColor:C.orange+'33',pointBackgroundColor:C.orange,pointRadius:4},
+      {label:'Promedio estatal',data:avgV.map((v,i)=>norm(v,maxes[i])),
+        borderColor:C.muted,backgroundColor:'transparent',borderDash:[4,4],pointRadius:2},
+    ]},
+    options:{responsive:true,
+      plugins:{legend:{position:'bottom',labels:{font:{size:10}}},tooltip:{...TT}},
+      scales:{r:{min:0,max:100,ticks:{display:false},grid:{color:C.grid},
+        pointLabels:{color:C.text,font:{size:11}},angleLines:{color:C.grid}}}}
+  });
+
+  if(compareBarInst) compareBarInst.destroy();
+  compareBarInst = new Chart(document.getElementById('compareBar'),{
+    type:'bar',
+    data:{labels:['Diabetes','HTA','Colesterol','Dep.','Tabaquismo'],
+      datasets:[
+        {label:a.municipio_corto,data:aVals,backgroundColor:C.blue+'99',borderColor:C.blue,borderWidth:1,borderRadius:4},
+        {label:b.municipio_corto,data:bVals,backgroundColor:C.orange+'99',borderColor:C.orange,borderWidth:1,borderRadius:4},
+        {label:'Promedio estatal',data:avgV, backgroundColor:'transparent',
+          borderColor:C.muted,borderWidth:2,type:'line',pointRadius:5,tension:0},
+      ]},
+    options:{responsive:true,plugins:{legend:{position:'top',labels:{font:{size:10}}},tooltip:{...TT}},
+      scales:{y:{grid:{color:C.grid}},x:{grid:{display:false}}}}
+  });
+
+  document.getElementById('compareTable').innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:11px">
+      <thead><tr style="border-bottom:1px solid var(--border)">
+        <th style="padding:8px 10px;text-align:left;color:var(--muted);font-size:9.5px;text-transform:uppercase">Indicador</th>
+        <th style="padding:8px 10px;text-align:right;color:${C.blue}">${a.municipio_corto}</th>
+        <th style="padding:8px 10px;text-align:right;color:${C.orange}">${b.municipio_corto}</th>
+        <th style="padding:8px 10px;text-align:right;color:var(--muted)">Promedio estatal</th>
+      </tr></thead>
+      <tbody>
+        ${[['Diabetes %',a.diabetes_pct,b.diabetes_pct,AVG.diabetes],
+           ['Hipertensión %',a.hta_pct,b.hta_pct,AVG.hta],
+           ['Colesterol %',a.colesterol_pct,b.colesterol_pct,AVG.colesterol],
+           ['Score depresivo',a.score_dep_media,b.score_dep_media,AVG.score_dep],
+           ['Tabaquismo %',a.fuma_pct,b.fuma_pct,AVG.fuma],
+           ['% Rural',a.pct_rural,b.pct_rural,'—'],
+           ['n muestra',a.n,b.n,'—'],
+           ['Riesgo compuesto',a.riesgo_compuesto,b.riesgo_compuesto,'—'],
+        ].map(([lbl,av,bv,avg])=>`
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:7px 10px;color:var(--muted)">${lbl}</td>
+            <td style="padding:7px 10px;text-align:right;font-weight:700;color:${C.blue}">${av}${typeof av==='number'&&!['n muestra','Riesgo compuesto','Score depresivo'].includes(lbl)?'%':''}</td>
+            <td style="padding:7px 10px;text-align:right;font-weight:700;color:${C.orange}">${bv}${typeof bv==='number'&&!['n muestra','Riesgo compuesto','Score depresivo'].includes(lbl)?'%':''}</td>
+            <td style="padding:7px 10px;text-align:right;color:var(--muted)">${typeof avg==='number'?avg+(![' Score depresivo'].includes(lbl)?'%':''):avg}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+
+  document.getElementById('compareModal').classList.add('open');
+}
+
+function closeCompare(){
+  document.getElementById('compareModal').classList.remove('open');
+}
+</script>
+</body>
+</html>
